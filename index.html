@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sklep różne różności</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .hidden { display: none; }
+    .item { margin-bottom: 1rem; border: 1px solid #ccc; padding: 1rem; }
+    button { margin: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. WIDOK WYBORU KATEGORII -->
+  <div id="category-view">
+    <h1>Wybierz kategorię</h1>
+    <div id="categories"></div>
+  </div>
+
+  <!-- 2. WIDOK SKLEPU -->
+  <div id="shop-view" class="hidden">
+    <button onclick="backToCategories()">← Wybierz inną kategorię</button>
+    <h1>Sklep – <span id="current-category"></span></h1>
+    <div id="products"></div>
+
+    <div class="item">
+      <h2>Koszyk</h2>
+      <ul id="cart"></ul>
+      <p><strong>Liczba produktów:</strong> <span id="item-count">0</span></p>
+      <p><strong>Łączna suma:</strong> <span id="total">0</span> zł</p>
+      <button onclick="goToSummary()">Przejdź do podsumowania</button>
+    </div>
+  </div>
+
+  <!-- 3. WIDOK PODSUMOWANIA -->
+  <div id="summary-view" class="hidden">
+    <h2>Podsumowanie zamówienia</h2>
+    <p>W Twoim koszyku: <span id="summary-count">0</span> produktów o wartości <span id="summary-total">0</span> zł.</p>
+    <button onclick="backToShop()">← Wróć do sklepu</button>
+  </div>
+
+  <script>
+    // KATEGORIE i PRODUKTY
+    const categories = ["Elektronika", "Książki", "Ubrania"];
+    const products = [
+      { id:1, name:"Laptop", price:2500, category:"Elektronika" },
+      { id:2, name:"Smartfon", price:1500, category:"Elektronika" },
+      { id:3, name:"Powieść", price:50, category:"Książki" },
+      { id:4, name:"Atlas zwierząt", price:80, category:"Książki" },
+      { id:5, name:"T-shirt", price:40, category:"Ubrania" },
+      { id:6, name:"Jeansy", price:120, category:"Ubrania" },
+    ];
+
+    let selectedCategory = null;
+    const cart = [];
+
+    // RENDER KATEGORII
+    function renderCategories() {
+      const container = document.getElementById("categories");
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.onclick = () => chooseCategory(cat);
+        container.appendChild(btn);
+      });
+    }
+
+    // PO WYBORZE KATEGORII
+    function chooseCategory(cat) {
+      selectedCategory = cat;
+      document.getElementById("current-category").textContent = cat;
+      document.getElementById("category-view").classList.add("hidden");
+      document.getElementById("shop-view").classList.remove("hidden");
+      renderProducts();
+    }
+
+    function backToCategories() {
+	  document.getElementById("shop-view").classList.add("hidden");
+	  document.getElementById("summary-view").classList.add("hidden");
+	  document.getElementById("category-view").classList.remove("hidden");
+	}
+
+    // RENDER PRODUKTÓW wg kategorii
+    function renderProducts() {
+      const container = document.getElementById("products");
+      container.innerHTML = "";
+      products
+        .filter(p => p.category === selectedCategory)
+        .forEach(p => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            <strong>${p.name}</strong> – ${p.price} zł
+            <button onclick="addToCart(${p.id})">Dodaj</button>
+          `;
+          container.appendChild(div);
+        });
+    }
+
+    // DODAJ DO KOSZYKA
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      updateCart();
+    }
+
+    // AKTUALIZUJ KOSZYK
+    function updateCart() {
+      const list = document.getElementById("cart");
+      list.innerHTML = "";
+      let total = 0;
+      cart.forEach(p => {
+        total += p.price;
+        const li = document.createElement("li");
+        li.textContent = `${p.name} – ${p.price} zł`;
+        list.appendChild(li);
+      });
+      document.getElementById("item-count").textContent = cart.length;
+      document.getElementById("total").textContent = total;
+      document.getElementById("summary-count").textContent = cart.length;
+      document.getElementById("summary-total").textContent = total;
+    }
+
+    // PRZEJŚCIE DO PODSUMOWANIA
+    function goToSummary() {
+      document.getElementById("shop-view").classList.add("hidden");
+      document.getElementById("summary-view").classList.remove("hidden");
+    }
+
+    // POWRÓT DO SKLEPU Z PODSUMOWANIA
+    function backToShop() {
+      document.getElementById("summary-view").classList.add("hidden");
+      document.getElementById("shop-view").classList.remove("hidden");
+    }
+
+    // START
+    renderCategories();
+  </script>
+</body>
+</html>

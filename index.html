@@ -4,58 +4,125 @@
   <meta charset="UTF-8" />
   <title>Sklep różne różności</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(135deg, red, orange, yellow, green, cyan, blue, violet);
+      background-attachment: fixed;
+      background-size: cover;
+      padding: 2rem;
+      color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+    }
+
+    .content-wrapper {
+      width: 100%;
+      max-width: 1200px; /* Maksymalna szerokość kontenera */
+    }
+
     .hidden { display: none; }
-    .item { margin-bottom: 1rem; border: 1px solid #ccc; padding: 1rem; }
+    
+    .item {
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .product-image {
+      max-width: 100px;
+      max-height: 100px;
+      display: block;
+      margin-top: 0.5rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
     button { margin: 0.5rem; }
+    #categories button {
+      margin: 0.5rem;
+    }
+    
+    .category-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .category-container button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .category-container button:hover {
+      background-color: #f0f0f0;
+    }
+    
   </style>
 </head>
 <body>
 
-  <!-- 1. WIDOK WYBORU KATEGORII -->
-  <div id="category-view">
-    <h1>Wybierz kategorię</h1>
-    <div id="categories"></div>
-  </div>
+  <div class="content-wrapper">
+    <!-- 1. WIDOK WYBORU KATEGORII -->
+    <div id="category-view">
+      <h1>Wybierz kategorię</h1>
+      <div id="categories" class="category-container"></div>
+    </div>
 
-  <!-- 2. WIDOK SKLEPU -->
-  <div id="shop-view" class="hidden">
-    <button onclick="backToCategories()">← Wybierz inną kategorię</button>
-    <h1>Sklep – <span id="current-category"></span></h1>
-    <div id="products"></div>
+    <!-- 2. WIDOK SKLEPU -->
+    <div id="shop-view" class="hidden">
+      <button onclick="backToCategories()">← Wybierz inną kategorię</button>
+      <h1>Sklep – <span id="current-category"></span></h1>
+      <div id="products"></div>
 
-    <div class="item">
-      <h2>Koszyk</h2>
-      <ul id="cart"></ul>
-      <p><strong>Liczba produktów:</strong> <span id="item-count">0</span></p>
-      <p><strong>Łączna suma:</strong> <span id="total">0</span> zł</p>
-      <button onclick="goToSummary()">Przejdź do podsumowania</button>
+      <div class="item">
+        <h2>Koszyk</h2>
+        <ul id="cart"></ul>
+        <p><strong>Liczba produktów:</strong> <span id="item-count">0</span></p>
+        <p><strong>Łączna suma:</strong> <span id="total">0</span> zł</p>
+        <button onclick="goToSummary()">Przejdź do podsumowania</button>
+      </div>
+    </div>
+
+    <!-- 3. WIDOK PODSUMOWANIA -->
+    <div id="summary-view" class="hidden">
+      <h2>Podsumowanie zamówienia</h2>
+      <p>W Twoim koszyku: <span id="summary-count">0</span> produktów o wartości <span id="summary-total">0</span> zł.</p>
+      <button onclick="backToShop()">← Wróć do sklepu</button>
+      <button onclick="placeOrder()">Zamów</button>
+      <p id="order-message" class="hidden">Zamówiono!</p>
     </div>
   </div>
 
-  <!-- 3. WIDOK PODSUMOWANIA -->
-  <div id="summary-view" class="hidden">
-    <h2>Podsumowanie zamówienia</h2>
-    <p>W Twoim koszyku: <span id="summary-count">0</span> produktów o wartości <span id="summary-total">0</span> zł.</p>
-    <button onclick="backToShop()">← Wróć do sklepu</button>
-  </div>
-
   <script>
-    // KATEGORIE i PRODUKTY
     const categories = ["Elektronika", "Książki", "Ubrania"];
     const products = [
-      { id:1, name:"Laptop", price:2500, category:"Elektronika" },
-      { id:2, name:"Smartfon", price:1500, category:"Elektronika" },
-      { id:3, name:"Powieść", price:50, category:"Książki" },
-      { id:4, name:"Atlas zwierząt", price:80, category:"Książki" },
-      { id:5, name:"T-shirt", price:40, category:"Ubrania" },
-      { id:6, name:"Jeansy", price:120, category:"Ubrania" },
-    ];
+	  { id: 1, name: "Laptop", price: 2500, category: "Elektronika", image: "images/laptop.jpg" },
+	  { id: 2, name: "Smartfon", price: 1500, category: "Elektronika", image: "images/smartfon.jpg" },
+	  { id: 3, name: "Powieść", price: 50, category: "Książki", image: "images/powiesc.jpg" },
+	  { id: 4, name: "Atlas zwierząt", price: 80, category: "Książki", image: "images/atlas.jpg" },
+	  { id: 5, name: "T-shirt", price: 40, category: "Ubrania", image: "images/tshirt.jpg" },
+	  { id: 6, name: "Jeansy", price: 120, category: "Ubrania", image: "images/jeansy.jpg" }
+	];
 
     let selectedCategory = null;
     const cart = [];
 
-    // RENDER KATEGORII
     function renderCategories() {
       const container = document.getElementById("categories");
       categories.forEach(cat => {
@@ -66,7 +133,6 @@
       });
     }
 
-    // PO WYBORZE KATEGORII
     function chooseCategory(cat) {
       selectedCategory = cat;
       document.getElementById("current-category").textContent = cat;
@@ -76,12 +142,11 @@
     }
 
     function backToCategories() {
-	  document.getElementById("shop-view").classList.add("hidden");
-	  document.getElementById("summary-view").classList.add("hidden");
-	  document.getElementById("category-view").classList.remove("hidden");
-	}
+      document.getElementById("shop-view").classList.add("hidden");
+      document.getElementById("summary-view").classList.add("hidden");
+      document.getElementById("category-view").classList.remove("hidden");
+    }
 
-    // RENDER PRODUKTÓW wg kategorii
     function renderProducts() {
       const container = document.getElementById("products");
       container.innerHTML = "";
@@ -91,21 +156,20 @@
           const div = document.createElement("div");
           div.className = "item";
           div.innerHTML = `
-            <strong>${p.name}</strong> – ${p.price} zł
+            <strong>${p.name}</strong> – ${p.price} zł<br>
+            <img src="${p.image}" alt="${p.name}" class="product-image">
             <button onclick="addToCart(${p.id})">Dodaj</button>
           `;
           container.appendChild(div);
         });
     }
 
-    // DODAJ DO KOSZYKA
     function addToCart(id) {
       const product = products.find(p => p.id === id);
       cart.push(product);
       updateCart();
     }
 
-    // AKTUALIZUJ KOSZYK
     function updateCart() {
       const list = document.getElementById("cart");
       list.innerHTML = "";
@@ -122,19 +186,31 @@
       document.getElementById("summary-total").textContent = total;
     }
 
-    // PRZEJŚCIE DO PODSUMOWANIA
     function goToSummary() {
       document.getElementById("shop-view").classList.add("hidden");
       document.getElementById("summary-view").classList.remove("hidden");
     }
 
-    // POWRÓT DO SKLEPU Z PODSUMOWANIA
     function backToShop() {
       document.getElementById("summary-view").classList.add("hidden");
       document.getElementById("shop-view").classList.remove("hidden");
     }
 
-    // START
+    function placeOrder() {
+      // Pokazanie komunikatu o zamówieniu
+      document.getElementById("order-message").classList.remove("hidden");
+      
+      // Czyszczenie koszyka
+      cart.length = 0;
+      updateCart();
+      
+      // Opcjonalnie: Powrót do widoku kategorii po chwili
+      setTimeout(() => {
+        document.getElementById("order-message").classList.add("hidden");
+        backToCategories();
+      }, 2000); // 2 sekundy opóźnienia przed powrotem do kategorii
+    }
+
     renderCategories();
   </script>
 </body>
